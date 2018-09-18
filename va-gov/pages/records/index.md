@@ -79,7 +79,7 @@ Access your VA records and documents online to manage your health and benefits.
   </div>
 
   <div class="link">
-    <a href="#"><b>Apply for a VA Home Loan Certificate of Eligibility</b></a>
+    <a href="/housing-assistance/home-loans/how-to-apply/"><b>Apply for a VA Home Loan Certificate of Eligibility</b></a>
     <p>Apply for a Certificate of Eligibility (COE), which confirms for your lender that you qualify for a VA-backed home loan. Then choose your loan type to learn about the rest of the loan application process.</p>
   </div>
 
