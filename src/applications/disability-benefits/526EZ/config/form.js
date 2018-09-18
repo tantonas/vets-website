@@ -54,6 +54,8 @@ import {
   privateRecordsChoice,
   facilityDescription,
   treatmentView,
+  download4142Notice,
+  authorizationToDisclose,
   documentDescription,
   evidenceSummaryView,
   additionalDocumentDescription,
@@ -116,6 +118,8 @@ const {
 } = fullSchema526EZ.definitions;
 
 const FIFTY_MB = 52428800;
+
+const enable4142 = false;
 
 const formConfig = {
   urlPrefix: '/',
@@ -451,13 +455,7 @@ const formConfig = {
           showPagePerItem: true,
           itemFilter: item => _.get('view:selected', item),
           arrayPath: 'disabilities',
-          depends: (formData, index) =>
-            _.get(
-              `disabilities.${
-                index
-              }.view:selectableEvidenceTypes.view:vaMedicalRecords`,
-              formData,
-            ),
+          depends: (formData, index) => _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:vaMedicalRecords`, formData),
           uiSchema: {
             disabilities: {
               items: {
@@ -485,13 +483,7 @@ const formConfig = {
           showPagePerItem: true,
           itemFilter: item => _.get('view:selected', item),
           arrayPath: 'disabilities',
-          depends: (formData, index) =>
-            _.get(
-              `disabilities.${
-                index
-              }.view:selectableEvidenceTypes.view:vaMedicalRecords`,
-              formData,
-            ),
+          depends: (formData, index) => _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:vaMedicalRecords`, formData),
           uiSchema: {
             disabilities: {
               items: {
@@ -552,13 +544,7 @@ const formConfig = {
           showPagePerItem: true,
           itemFilter: item => _.get('view:selected', item),
           arrayPath: 'disabilities',
-          depends: (formData, index) =>
-            _.get(
-              `disabilities.${
-                index
-              }.view:selectableEvidenceTypes.view:privateMedicalRecords`,
-              formData,
-            ),
+          depends: (formData, index) => _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData),
           uiSchema: {
             disabilities: {
               items: {
@@ -580,27 +566,131 @@ const formConfig = {
             },
           },
         },
+        /** begin original 526 code with flags */
         privateRecordChoice: {
           title: '',
           path: 'supporting-evidence/:index/private-medical-records-choice',
           showPagePerItem: true,
-          itemFilter: item => _.get('view:selected', item),
+          itemFilter: (item) => _.get('view:selected', item),
           arrayPath: 'disabilities',
-          depends: (formData, index) =>
-            _.get(
-              `disabilities.${
-                index
-              }.view:selectableEvidenceTypes.view:privateMedicalRecords`,
-              formData,
-            ),
+          depends: (formData, index) => {
+            if(enable4142 === true) {
+              return false;
+            }
+
+            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData)
+          },
           uiSchema: {
             disabilities: {
               items: {
                 'ui:title': disabilityNameTitle,
                 'ui:description': privateRecordsChoice,
                 'view:uploadPrivateRecords': {
-                  'ui:title':
-                    'Do you want to upload your private medical records?',
+                  'ui:title': 'Do you want to upload your private medical records?',
+                  'ui:widget': 'radio',
+                  'ui:options': {
+                    labels: {
+                      yes: 'Yes',
+                      no: 'No, my doctor has my medical records'
+                    }
+                  }
+                },
+                'view:privateRecords4142Notice': {
+                  'ui:description': download4142Notice,
+                  'ui:options': {
+                    expandUnder: 'view:uploadPrivateRecords',
+                    expandUnderCondition: 'no'
+                  }
+                },
+                'view:privateRecordsChoiceHelp': {
+                  'ui:description': privateRecordsChoiceHelp
+                }
+              }
+            }
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              disabilities: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['view:uploadPrivateRecords'],
+                  properties: {
+                    'view:uploadPrivateRecords': {
+                      type: 'string',
+                      'enum': ['yes', 'no']
+                    },
+                    'view:privateRecords4142Notice': {
+                      type: 'object',
+                      'ui:collapsed': true,
+                      properties: {}
+                    },
+                    'view:privateRecordsChoiceHelp': {
+                      type: 'object',
+                      properties: {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        authorizationToDisclose: {
+          title: '',
+          path: 'supporting-evidence/:index/authorization-to-disclose',
+          showPagePerItem: true,
+          itemFilter: (item) => _.get('view:selected', item),
+          arrayPath: 'disabilities',
+          depends: (formData, index) => {
+            if(enable4142 === true) {
+              return false;
+            }
+
+            const hasRecords = _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData);
+            const requestsRecords = _.get(`disabilities.${index}.view:uploadPrivateRecords`, formData) === 'no';
+            return hasRecords && requestsRecords;
+          },
+          uiSchema: {
+            disabilities: {
+              items: {
+                'ui:description': authorizationToDisclose
+              }
+            }
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              disabilities: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {}
+                }
+              }
+            }
+          }
+        },
+        /** end original 526 code with flags */
+        privateRecordReleaseChoice: {
+          title: '',
+          path: 'supporting-evidence/:index/private-medical-records-release-choice',
+          showPagePerItem: true,
+          itemFilter: (item) => _.get('view:selected', item),
+          arrayPath: 'disabilities',
+          depends: (formData, index) => {
+            if(enable4142 === false) {
+              return false;
+            }
+            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData)
+          },
+          uiSchema: {
+            disabilities: {
+              items: {
+                'ui:title': disabilityNameTitle,
+                'ui:description': privateRecordsChoice,
+                'view:uploadPrivateRecords': {
+                  'ui:title': 'Do you want to upload your private medical records?',
                   'ui:widget': 'radio',
                   'ui:options': {
                     labels: {
@@ -666,18 +756,10 @@ const formConfig = {
           itemFilter: item => _.get('view:selected', item),
           arrayPath: 'disabilities',
           depends: (formData, index) => {
-            const hasRecords = _.get(
-              `disabilities.${
-                index
-              }.view:selectableEvidenceTypes.view:privateMedicalRecords`,
-              formData,
-            );
-            const requestsRecords =
-              _.get(
-                `disabilities.${index}.view:uploadPrivateRecords`,
-                formData,
-              ) === 'no';
-            return hasRecords && requestsRecords;
+            const hasRecords = _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData);
+            const requestsRecords = _.get(`disabilities.${index}.view:uploadPrivateRecords`, formData) === 'no';
+
+            return hasRecords && requestsRecords && enable4142;
           },
           uiSchema: {
             disabilities: {
