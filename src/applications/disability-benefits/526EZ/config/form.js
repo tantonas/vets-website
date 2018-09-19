@@ -574,11 +574,11 @@ const formConfig = {
           itemFilter: (item) => _.get('view:selected', item),
           arrayPath: 'disabilities',
           depends: (formData, index) => {
-            if(enable4142 === true) {
+            if (enable4142 === true) {
               return false;
             }
 
-            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData)
+            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData);
           },
           uiSchema: {
             disabilities: {
@@ -643,7 +643,7 @@ const formConfig = {
           itemFilter: (item) => _.get('view:selected', item),
           arrayPath: 'disabilities',
           depends: (formData, index) => {
-            if(enable4142 === true) {
+            if (enable4142 === true) {
               return false;
             }
 
@@ -679,10 +679,10 @@ const formConfig = {
           itemFilter: (item) => _.get('view:selected', item),
           arrayPath: 'disabilities',
           depends: (formData, index) => {
-            if(enable4142 === false) {
+            if (enable4142 === false) {
               return false;
             }
-            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData)
+            return _.get(`disabilities.${index}.view:selectableEvidenceTypes.view:privateMedicalRecords`, formData);
           },
           uiSchema: {
             disabilities: {
