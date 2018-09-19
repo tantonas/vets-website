@@ -132,7 +132,11 @@
   // TODO: this leaves a background space since the box is too wide
   [href^="http"], [rel="external"] {
     background-image: none;
-    padding-right: 0px;
+  }
+  #crisis-expander-content {
+    [href^="http"], [rel="external"] {
+      padding-right: 0px;
+    }
   }
 
   #homepage-hub {
